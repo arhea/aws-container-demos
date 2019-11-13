@@ -1,0 +1,981 @@
+yarn run v1.19.1
+$ cdk --app "npx ts-node bin/aws-ecs-basic.ts" --profile personal synth
+Resources:
+  BasicEcsVpc1C16EA90:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.1.0.0/16
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      InstanceTenancy: default
+      Tags:
+        - Key: Name
+          Value: DemoBasicEcs/BasicEcsVpc
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsVpc/Resource
+  BasicEcsVpcPublicSubnet1Subnet209A6334:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.1.0.0/18
+      VpcId:
+        Ref: BasicEcsVpc1C16EA90
+      AvailabilityZone:
+        Fn::Select:
+          - 0
+          - Fn::GetAZs: ""
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: DemoBasicEcs/BasicEcsVpc/PublicSubnet1
+        - Key: aws-cdk:subnet-name
+          Value: Public
+        - Key: aws-cdk:subnet-type
+          Value: Public
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsVpc/PublicSubnet1/Subnet
+  BasicEcsVpcPublicSubnet1RouteTable1A9F4562:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:
+        Ref: BasicEcsVpc1C16EA90
+      Tags:
+        - Key: Name
+          Value: DemoBasicEcs/BasicEcsVpc/PublicSubnet1
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsVpc/PublicSubnet1/RouteTable
+  BasicEcsVpcPublicSubnet1RouteTableAssociation5D8F40DD:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: BasicEcsVpcPublicSubnet1RouteTable1A9F4562
+      SubnetId:
+        Ref: BasicEcsVpcPublicSubnet1Subnet209A6334
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsVpc/PublicSubnet1/RouteTableAssociation
+  BasicEcsVpcPublicSubnet1DefaultRoute3FBA8853:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId:
+        Ref: BasicEcsVpcPublicSubnet1RouteTable1A9F4562
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId:
+        Ref: BasicEcsVpcIGWFCA37A00
+    DependsOn:
+      - BasicEcsVpcVPCGW84F635EE
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsVpc/PublicSubnet1/DefaultRoute
+  BasicEcsVpcPublicSubnet1EIPEABC3F2D:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsVpc/PublicSubnet1/EIP
+  BasicEcsVpcPublicSubnet1NATGateway032E30CD:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId:
+        Fn::GetAtt:
+          - BasicEcsVpcPublicSubnet1EIPEABC3F2D
+          - AllocationId
+      SubnetId:
+        Ref: BasicEcsVpcPublicSubnet1Subnet209A6334
+      Tags:
+        - Key: Name
+          Value: DemoBasicEcs/BasicEcsVpc/PublicSubnet1
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsVpc/PublicSubnet1/NATGateway
+  BasicEcsVpcPublicSubnet2Subnet4CF4FA78:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.1.64.0/18
+      VpcId:
+        Ref: BasicEcsVpc1C16EA90
+      AvailabilityZone:
+        Fn::Select:
+          - 1
+          - Fn::GetAZs: ""
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: DemoBasicEcs/BasicEcsVpc/PublicSubnet2
+        - Key: aws-cdk:subnet-name
+          Value: Public
+        - Key: aws-cdk:subnet-type
+          Value: Public
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsVpc/PublicSubnet2/Subnet
+  BasicEcsVpcPublicSubnet2RouteTable923D31A7:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:
+        Ref: BasicEcsVpc1C16EA90
+      Tags:
+        - Key: Name
+          Value: DemoBasicEcs/BasicEcsVpc/PublicSubnet2
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsVpc/PublicSubnet2/RouteTable
+  BasicEcsVpcPublicSubnet2RouteTableAssociationE3D68B56:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: BasicEcsVpcPublicSubnet2RouteTable923D31A7
+      SubnetId:
+        Ref: BasicEcsVpcPublicSubnet2Subnet4CF4FA78
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsVpc/PublicSubnet2/RouteTableAssociation
+  BasicEcsVpcPublicSubnet2DefaultRoute2446525A:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId:
+        Ref: BasicEcsVpcPublicSubnet2RouteTable923D31A7
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId:
+        Ref: BasicEcsVpcIGWFCA37A00
+    DependsOn:
+      - BasicEcsVpcVPCGW84F635EE
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsVpc/PublicSubnet2/DefaultRoute
+  BasicEcsVpcPublicSubnet2EIP933247D0:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsVpc/PublicSubnet2/EIP
+  BasicEcsVpcPublicSubnet2NATGateway4CA88E0B:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId:
+        Fn::GetAtt:
+          - BasicEcsVpcPublicSubnet2EIP933247D0
+          - AllocationId
+      SubnetId:
+        Ref: BasicEcsVpcPublicSubnet2Subnet4CF4FA78
+      Tags:
+        - Key: Name
+          Value: DemoBasicEcs/BasicEcsVpc/PublicSubnet2
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsVpc/PublicSubnet2/NATGateway
+  BasicEcsVpcPrivateSubnet1Subnet86CA778B:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.1.128.0/18
+      VpcId:
+        Ref: BasicEcsVpc1C16EA90
+      AvailabilityZone:
+        Fn::Select:
+          - 0
+          - Fn::GetAZs: ""
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: DemoBasicEcs/BasicEcsVpc/PrivateSubnet1
+        - Key: aws-cdk:subnet-name
+          Value: Private
+        - Key: aws-cdk:subnet-type
+          Value: Private
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsVpc/PrivateSubnet1/Subnet
+  BasicEcsVpcPrivateSubnet1RouteTableDC45D1C0:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:
+        Ref: BasicEcsVpc1C16EA90
+      Tags:
+        - Key: Name
+          Value: DemoBasicEcs/BasicEcsVpc/PrivateSubnet1
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsVpc/PrivateSubnet1/RouteTable
+  BasicEcsVpcPrivateSubnet1RouteTableAssociation4EB8673E:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: BasicEcsVpcPrivateSubnet1RouteTableDC45D1C0
+      SubnetId:
+        Ref: BasicEcsVpcPrivateSubnet1Subnet86CA778B
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsVpc/PrivateSubnet1/RouteTableAssociation
+  BasicEcsVpcPrivateSubnet1DefaultRoute626C0089:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId:
+        Ref: BasicEcsVpcPrivateSubnet1RouteTableDC45D1C0
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId:
+        Ref: BasicEcsVpcPublicSubnet1NATGateway032E30CD
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsVpc/PrivateSubnet1/DefaultRoute
+  BasicEcsVpcPrivateSubnet2Subnet6A418DB1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.1.192.0/18
+      VpcId:
+        Ref: BasicEcsVpc1C16EA90
+      AvailabilityZone:
+        Fn::Select:
+          - 1
+          - Fn::GetAZs: ""
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: DemoBasicEcs/BasicEcsVpc/PrivateSubnet2
+        - Key: aws-cdk:subnet-name
+          Value: Private
+        - Key: aws-cdk:subnet-type
+          Value: Private
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsVpc/PrivateSubnet2/Subnet
+  BasicEcsVpcPrivateSubnet2RouteTableB80067AD:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:
+        Ref: BasicEcsVpc1C16EA90
+      Tags:
+        - Key: Name
+          Value: DemoBasicEcs/BasicEcsVpc/PrivateSubnet2
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsVpc/PrivateSubnet2/RouteTable
+  BasicEcsVpcPrivateSubnet2RouteTableAssociationDD99F8B6:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: BasicEcsVpcPrivateSubnet2RouteTableB80067AD
+      SubnetId:
+        Ref: BasicEcsVpcPrivateSubnet2Subnet6A418DB1
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsVpc/PrivateSubnet2/RouteTableAssociation
+  BasicEcsVpcPrivateSubnet2DefaultRouteF6E47D8C:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId:
+        Ref: BasicEcsVpcPrivateSubnet2RouteTableB80067AD
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId:
+        Ref: BasicEcsVpcPublicSubnet2NATGateway4CA88E0B
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsVpc/PrivateSubnet2/DefaultRoute
+  BasicEcsVpcIGWFCA37A00:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: DemoBasicEcs/BasicEcsVpc
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsVpc/IGW
+  BasicEcsVpcVPCGW84F635EE:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId:
+        Ref: BasicEcsVpc1C16EA90
+      InternetGatewayId:
+        Ref: BasicEcsVpcIGWFCA37A00
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsVpc/VPCGW
+  BasicEcsLogGroup54C77999:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /demo/aws-ecs-basic/nginx
+      RetentionInDays: 731
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsLogGroup/Resource
+  BasicEcsExecutionRoleE75C71FE:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      RoleName: BasicEcsNginxExecutionRole
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsExecutionRole/Resource
+  BasicEcsExecutionRoleDefaultPolicyE07CBF73:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - BasicEcsLogGroup54C77999
+                - Arn
+        Version: "2012-10-17"
+      PolicyName: BasicEcsExecutionRoleDefaultPolicyE07CBF73
+      Roles:
+        - Ref: BasicEcsExecutionRoleE75C71FE
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsExecutionRole/DefaultPolicy/Resource
+  BasicEcsCluster54ADACAF:
+    Type: AWS::ECS::Cluster
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsCluster/Resource
+  BasicEcsClusterBasicEcsNodeGroupInstanceSecurityGroup41317894:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: DemoBasicEcs/BasicEcsCluster/BasicEcsNodeGroup/InstanceSecurityGroup
+      SecurityGroupEgress:
+        - CidrIp: 0.0.0.0/0
+          Description: Allow all outbound traffic by default
+          IpProtocol: "-1"
+      Tags:
+        - Key: Name
+          Value: DemoBasicEcs/BasicEcsCluster/BasicEcsNodeGroup
+      VpcId:
+        Ref: BasicEcsVpc1C16EA90
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsCluster/BasicEcsNodeGroup/InstanceSecurityGroup/Resource
+  BasicEcsClusterBasicEcsNodeGroupInstanceRole33B5BEF2:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+                Fn::Join:
+                  - ""
+                  - - ec2.
+                    - Ref: AWS::URLSuffix
+        Version: "2012-10-17"
+      Tags:
+        - Key: Name
+          Value: DemoBasicEcs/BasicEcsCluster/BasicEcsNodeGroup
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsCluster/BasicEcsNodeGroup/InstanceRole/Resource
+  BasicEcsClusterBasicEcsNodeGroupInstanceRoleDefaultPolicy9BF84D02:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - ecs:CreateCluster
+              - ecs:DeregisterContainerInstance
+              - ecs:DiscoverPollEndpoint
+              - ecs:Poll
+              - ecs:RegisterContainerInstance
+              - ecs:StartTelemetrySession
+              - ecs:Submit*
+              - ecr:GetAuthorizationToken
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Effect: Allow
+            Resource: "*"
+        Version: "2012-10-17"
+      PolicyName: BasicEcsClusterBasicEcsNodeGroupInstanceRoleDefaultPolicy9BF84D02
+      Roles:
+        - Ref: BasicEcsClusterBasicEcsNodeGroupInstanceRole33B5BEF2
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsCluster/BasicEcsNodeGroup/InstanceRole/DefaultPolicy/Resource
+  BasicEcsClusterBasicEcsNodeGroupInstanceProfile65755A5B:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - Ref: BasicEcsClusterBasicEcsNodeGroupInstanceRole33B5BEF2
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsCluster/BasicEcsNodeGroup/InstanceProfile
+  BasicEcsClusterBasicEcsNodeGroupLaunchConfigB857E762:
+    Type: AWS::AutoScaling::LaunchConfiguration
+    Properties:
+      ImageId:
+        Ref: SsmParameterValueawsserviceecsoptimizedamiamazonlinux2recommendedimageidC96584B6F00A464EAD1953AFF4B05118Parameter
+      InstanceType: t2.large
+      IamInstanceProfile:
+        Ref: BasicEcsClusterBasicEcsNodeGroupInstanceProfile65755A5B
+      SecurityGroups:
+        - Fn::GetAtt:
+            - BasicEcsClusterBasicEcsNodeGroupInstanceSecurityGroup41317894
+            - GroupId
+      UserData:
+        Fn::Base64:
+          Fn::Join:
+            - ""
+            - - >-
+                #!/bin/bash
+
+                echo ECS_CLUSTER=
+              - Ref: BasicEcsCluster54ADACAF
+              - >-2
+                 >> /etc/ecs/ecs.config
+                sudo iptables --insert FORWARD 1 --in-interface docker+ --destination 169.254.169.254/32 --jump DROP
+
+                sudo service iptables save
+
+                echo ECS_AWSVPC_BLOCK_IMDS=true >> /etc/ecs/ecs.config
+    DependsOn:
+      - BasicEcsClusterBasicEcsNodeGroupInstanceRoleDefaultPolicy9BF84D02
+      - BasicEcsClusterBasicEcsNodeGroupInstanceRole33B5BEF2
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsCluster/BasicEcsNodeGroup/LaunchConfig
+  BasicEcsClusterBasicEcsNodeGroupASG92CD291D:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      MaxSize: "6"
+      MinSize: "3"
+      DesiredCapacity: "3"
+      LaunchConfigurationName:
+        Ref: BasicEcsClusterBasicEcsNodeGroupLaunchConfigB857E762
+      Tags:
+        - Key: Name
+          PropagateAtLaunch: true
+          Value: DemoBasicEcs/BasicEcsCluster/BasicEcsNodeGroup
+      VPCZoneIdentifier:
+        - Ref: BasicEcsVpcPrivateSubnet1Subnet86CA778B
+        - Ref: BasicEcsVpcPrivateSubnet2Subnet6A418DB1
+    UpdatePolicy:
+      AutoScalingReplacingUpdate:
+        WillReplace: true
+      AutoScalingScheduledAction:
+        IgnoreUnmodifiedGroupSizeProperties: true
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsCluster/BasicEcsNodeGroup/ASG
+  BasicEcsClusterBasicEcsNodeGroupDrainECSHookFunctionServiceRole4B99539A:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Tags:
+        - Key: Name
+          Value: DemoBasicEcs/BasicEcsCluster/BasicEcsNodeGroup
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsCluster/BasicEcsNodeGroup/DrainECSHook/Function/ServiceRole/Resource
+  BasicEcsClusterBasicEcsNodeGroupDrainECSHookFunctionServiceRoleDefaultPolicyFF17AA89:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - ec2:DescribeInstances
+              - ec2:DescribeInstanceAttribute
+              - ec2:DescribeInstanceStatus
+              - ec2:DescribeHosts
+            Effect: Allow
+            Resource: "*"
+          - Action: autoscaling:CompleteLifecycleAction
+            Effect: Allow
+            Resource:
+              Fn::Join:
+                - ""
+                - - "arn:"
+                  - Ref: AWS::Partition
+                  - ":autoscaling:"
+                  - Ref: AWS::Region
+                  - ":"
+                  - Ref: AWS::AccountId
+                  - :autoScalingGroup:*:autoScalingGroupName/
+                  - Ref: BasicEcsClusterBasicEcsNodeGroupASG92CD291D
+          - Action:
+              - ecs:DescribeContainerInstances
+              - ecs:DescribeTasks
+            Effect: Allow
+            Resource: "*"
+          - Action:
+              - ecs:ListContainerInstances
+              - ecs:SubmitContainerStateChange
+              - ecs:SubmitTaskStateChange
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - BasicEcsCluster54ADACAF
+                - Arn
+          - Action:
+              - ecs:UpdateContainerInstancesState
+              - ecs:ListTasks
+            Condition:
+              ArnEquals:
+                ecs:cluster:
+                  Fn::GetAtt:
+                    - BasicEcsCluster54ADACAF
+                    - Arn
+            Effect: Allow
+            Resource: "*"
+        Version: "2012-10-17"
+      PolicyName: BasicEcsClusterBasicEcsNodeGroupDrainECSHookFunctionServiceRoleDefaultPolicyFF17AA89
+      Roles:
+        - Ref: BasicEcsClusterBasicEcsNodeGroupDrainECSHookFunctionServiceRole4B99539A
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsCluster/BasicEcsNodeGroup/DrainECSHook/Function/ServiceRole/DefaultPolicy/Resource
+  BasicEcsClusterBasicEcsNodeGroupDrainECSHookFunctionF8EED5DF:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        ZipFile: >
+          import boto3, json, os, time
+
+
+          ecs = boto3.client('ecs')
+
+          autoscaling = boto3.client('autoscaling')
+
+
+
+          def lambda_handler(event, context):
+            print(json.dumps(event))
+            cluster = os.environ['CLUSTER']
+            snsTopicArn = event['Records'][0]['Sns']['TopicArn']
+            lifecycle_event = json.loads(event['Records'][0]['Sns']['Message'])
+            instance_id = lifecycle_event.get('EC2InstanceId')
+            if not instance_id:
+              print('Got event without EC2InstanceId: %s', json.dumps(event))
+              return
+
+            instance_arn = container_instance_arn(cluster, instance_id)
+            print('Instance %s has container instance ARN %s' % (lifecycle_event['EC2InstanceId'], instance_arn))
+
+            if not instance_arn:
+              return
+
+            while has_tasks(cluster, instance_arn):
+              time.sleep(10)
+
+            try:
+              print('Terminating instance %s' % instance_id)
+              autoscaling.complete_lifecycle_action(
+                  LifecycleActionResult='CONTINUE',
+                  **pick(lifecycle_event, 'LifecycleHookName', 'LifecycleActionToken', 'AutoScalingGroupName'))
+            except Exception as e:
+              # Lifecycle action may have already completed.
+              print(str(e))
+
+
+          def container_instance_arn(cluster, instance_id):
+            """Turn an instance ID into a container instance ARN."""
+            arns = ecs.list_container_instances(cluster=cluster, filter='ec2InstanceId==' + instance_id)['containerInstanceArns']
+            if not arns:
+              return None
+            return arns[0]
+
+
+          def has_tasks(cluster, instance_arn):
+            """Return True if the instance is running tasks for the given cluster."""
+            instances = ecs.describe_container_instances(cluster=cluster, containerInstances=[instance_arn])['containerInstances']
+            if not instances:
+              return False
+            instance = instances[0]
+
+            if instance['status'] == 'ACTIVE':
+              # Start draining, then try again later
+              set_container_instance_to_draining(cluster, instance_arn)
+              return True
+
+            tasks = instance['runningTasksCount'] + instance['pendingTasksCount']
+            print('Instance %s has %s tasks' % (instance_arn, tasks))
+
+            return tasks > 0
+
+
+          def set_container_instance_to_draining(cluster, instance_arn):
+            ecs.update_container_instances_state(
+                cluster=cluster,
+                containerInstances=[instance_arn], status='DRAINING')
+
+
+          def pick(dct, *keys):
+            """Pick a subset of a dict."""
+            return {k: v for k, v in dct.items() if k in keys}
+      Handler: index.lambda_handler
+      Role:
+        Fn::GetAtt:
+          - BasicEcsClusterBasicEcsNodeGroupDrainECSHookFunctionServiceRole4B99539A
+          - Arn
+      Runtime: python3.6
+      Environment:
+        Variables:
+          CLUSTER:
+            Ref: BasicEcsCluster54ADACAF
+      Tags:
+        - Key: Name
+          Value: DemoBasicEcs/BasicEcsCluster/BasicEcsNodeGroup
+      Timeout: 310
+    DependsOn:
+      - BasicEcsClusterBasicEcsNodeGroupDrainECSHookFunctionServiceRoleDefaultPolicyFF17AA89
+      - BasicEcsClusterBasicEcsNodeGroupDrainECSHookFunctionServiceRole4B99539A
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsCluster/BasicEcsNodeGroup/DrainECSHook/Function/Resource
+  BasicEcsClusterBasicEcsNodeGroupDrainECSHookFunctionAllowInvokeDemoBasicEcsBasicEcsClusterBasicEcsNodeGroupLifecycleHookDrainHookTopicD518094A183C916A:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Fn::GetAtt:
+          - BasicEcsClusterBasicEcsNodeGroupDrainECSHookFunctionF8EED5DF
+          - Arn
+      Principal: sns.amazonaws.com
+      SourceArn:
+        Ref: BasicEcsClusterBasicEcsNodeGroupLifecycleHookDrainHookTopic561E88F2
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsCluster/BasicEcsNodeGroup/DrainECSHook/Function/AllowInvoke:DemoBasicEcsBasicEcsClusterBasicEcsNodeGroupLifecycleHookDrainHookTopicD518094A
+  BasicEcsClusterBasicEcsNodeGroupDrainECSHookFunctionTopicF5EB6223:
+    Type: AWS::SNS::Subscription
+    Properties:
+      Protocol: lambda
+      TopicArn:
+        Ref: BasicEcsClusterBasicEcsNodeGroupLifecycleHookDrainHookTopic561E88F2
+      Endpoint:
+        Fn::GetAtt:
+          - BasicEcsClusterBasicEcsNodeGroupDrainECSHookFunctionF8EED5DF
+          - Arn
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsCluster/BasicEcsNodeGroup/DrainECSHook/Function/Topic/Resource
+  BasicEcsClusterBasicEcsNodeGroupLifecycleHookDrainHookRoleBC553B96:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: autoscaling.amazonaws.com
+        Version: "2012-10-17"
+      Tags:
+        - Key: Name
+          Value: DemoBasicEcs/BasicEcsCluster/BasicEcsNodeGroup
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsCluster/BasicEcsNodeGroup/LifecycleHookDrainHook/Role/Resource
+  BasicEcsClusterBasicEcsNodeGroupLifecycleHookDrainHookRoleDefaultPolicy4C4E26C2:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action: sns:Publish
+            Effect: Allow
+            Resource:
+              Ref: BasicEcsClusterBasicEcsNodeGroupLifecycleHookDrainHookTopic561E88F2
+        Version: "2012-10-17"
+      PolicyName: BasicEcsClusterBasicEcsNodeGroupLifecycleHookDrainHookRoleDefaultPolicy4C4E26C2
+      Roles:
+        - Ref: BasicEcsClusterBasicEcsNodeGroupLifecycleHookDrainHookRoleBC553B96
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsCluster/BasicEcsNodeGroup/LifecycleHookDrainHook/Role/DefaultPolicy/Resource
+  BasicEcsClusterBasicEcsNodeGroupLifecycleHookDrainHookTopic561E88F2:
+    Type: AWS::SNS::Topic
+    Properties:
+      Tags:
+        - Key: Name
+          Value: DemoBasicEcs/BasicEcsCluster/BasicEcsNodeGroup
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsCluster/BasicEcsNodeGroup/LifecycleHookDrainHook/Topic/Resource
+  BasicEcsClusterBasicEcsNodeGroupLifecycleHookDrainHookDFBC6FBD:
+    Type: AWS::AutoScaling::LifecycleHook
+    Properties:
+      AutoScalingGroupName:
+        Ref: BasicEcsClusterBasicEcsNodeGroupASG92CD291D
+      LifecycleTransition: autoscaling:EC2_INSTANCE_TERMINATING
+      DefaultResult: CONTINUE
+      HeartbeatTimeout: 300
+      NotificationTargetARN:
+        Ref: BasicEcsClusterBasicEcsNodeGroupLifecycleHookDrainHookTopic561E88F2
+      RoleARN:
+        Fn::GetAtt:
+          - BasicEcsClusterBasicEcsNodeGroupLifecycleHookDrainHookRoleBC553B96
+          - Arn
+    DependsOn:
+      - BasicEcsClusterBasicEcsNodeGroupLifecycleHookDrainHookRoleDefaultPolicy4C4E26C2
+      - BasicEcsClusterBasicEcsNodeGroupLifecycleHookDrainHookRoleBC553B96
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsCluster/BasicEcsNodeGroup/LifecycleHookDrainHook/Resource
+  NginxTaxDefinitionTaskRoleA1F63B15:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+        Version: "2012-10-17"
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/NginxTaxDefinition/TaskRole/Resource
+  NginxTaxDefinitionB2B03143:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      ContainerDefinitions:
+        - Cpu: 1024
+          Essential: true
+          HealthCheck:
+            Command:
+              - CMD-SHELL
+              - curl -f http://localhost || exit 1
+            Interval: 10
+            Retries: 3
+            StartPeriod: 10
+            Timeout: 10
+          Image: nginx:1.17
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group:
+                Ref: BasicEcsLogGroup54C77999
+              awslogs-stream-prefix: basic-
+              awslogs-region:
+                Ref: AWS::Region
+          Memory: 1024
+          MemoryReservation: 512
+          Name: nginx-container
+          PortMappings:
+            - ContainerPort: 80
+              Protocol: tcp
+      ExecutionRoleArn:
+        Fn::GetAtt:
+          - BasicEcsExecutionRoleE75C71FE
+          - Arn
+      Family: basic-nginx-demo
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - EC2
+      TaskRoleArn:
+        Fn::GetAtt:
+          - NginxTaxDefinitionTaskRoleA1F63B15
+          - Arn
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/NginxTaxDefinition/Resource
+  BasicEcsService4C6716AF:
+    Type: AWS::ECS::Service
+    Properties:
+      TaskDefinition:
+        Ref: NginxTaxDefinitionB2B03143
+      Cluster:
+        Ref: BasicEcsCluster54ADACAF
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 50
+      DesiredCount: 3
+      EnableECSManagedTags: true
+      HealthCheckGracePeriodSeconds: 60
+      LaunchType: EC2
+      LoadBalancers:
+        - ContainerName: nginx-container
+          ContainerPort: 80
+          TargetGroupArn:
+            Ref: BasicEcsLoadBalancerBasicEcsPublicListenerBasicEcsTargetsGroup7F07C398
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: DISABLED
+          SecurityGroups:
+            - Fn::GetAtt:
+                - BasicEcsServiceSecurityGroup25265699
+                - GroupId
+          Subnets:
+            - Ref: BasicEcsVpcPrivateSubnet1Subnet86CA778B
+            - Ref: BasicEcsVpcPrivateSubnet2Subnet6A418DB1
+      SchedulingStrategy: REPLICA
+      ServiceName: nginx-service
+    DependsOn:
+      - BasicEcsLoadBalancerBasicEcsPublicListenerBasicEcsTargetsGroup7F07C398
+      - BasicEcsLoadBalancerBasicEcsPublicListener7EC215E5
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsService/Service
+  BasicEcsServiceSecurityGroup25265699:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: DemoBasicEcs/BasicEcsService/SecurityGroup
+      SecurityGroupEgress:
+        - CidrIp: 0.0.0.0/0
+          Description: Allow all outbound traffic by default
+          IpProtocol: "-1"
+      VpcId:
+        Ref: BasicEcsVpc1C16EA90
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsService/SecurityGroup/Resource
+  BasicEcsServiceSecurityGroupfromDemoBasicEcsBasicEcsLoadBalancerSecurityGroupF6396B8280F0AB09D7:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      Description: Load balancer to target
+      FromPort: 80
+      GroupId:
+        Fn::GetAtt:
+          - BasicEcsServiceSecurityGroup25265699
+          - GroupId
+      SourceSecurityGroupId:
+        Fn::GetAtt:
+          - BasicEcsLoadBalancerSecurityGroupDF41C1BB
+          - GroupId
+      ToPort: 80
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsService/SecurityGroup/from DemoBasicEcsBasicEcsLoadBalancerSecurityGroupF6396B82:80
+  BasicEcsLoadBalancer3D620985:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Scheme: internet-facing
+      SecurityGroups:
+        - Fn::GetAtt:
+            - BasicEcsLoadBalancerSecurityGroupDF41C1BB
+            - GroupId
+      Subnets:
+        - Ref: BasicEcsVpcPublicSubnet1Subnet209A6334
+        - Ref: BasicEcsVpcPublicSubnet2Subnet4CF4FA78
+      Type: application
+    DependsOn:
+      - BasicEcsVpcPublicSubnet1DefaultRoute3FBA8853
+      - BasicEcsVpcPublicSubnet2DefaultRoute2446525A
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsLoadBalancer/Resource
+  BasicEcsLoadBalancerSecurityGroupDF41C1BB:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Automatically created Security Group for ELB DemoBasicEcsBasicEcsLoadBalancer0C841E4E
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          Description: Allow from anyone on port 80
+          FromPort: 80
+          IpProtocol: tcp
+          ToPort: 80
+      VpcId:
+        Ref: BasicEcsVpc1C16EA90
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsLoadBalancer/SecurityGroup/Resource
+  BasicEcsLoadBalancerSecurityGrouptoDemoBasicEcsBasicEcsServiceSecurityGroupDF17D4C480BC80B253:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      GroupId:
+        Fn::GetAtt:
+          - BasicEcsLoadBalancerSecurityGroupDF41C1BB
+          - GroupId
+      IpProtocol: tcp
+      Description: Load balancer to target
+      DestinationSecurityGroupId:
+        Fn::GetAtt:
+          - BasicEcsServiceSecurityGroup25265699
+          - GroupId
+      FromPort: 80
+      ToPort: 80
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsLoadBalancer/SecurityGroup/to DemoBasicEcsBasicEcsServiceSecurityGroupDF17D4C4:80
+  BasicEcsLoadBalancerBasicEcsPublicListener7EC215E5:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - TargetGroupArn:
+            Ref: BasicEcsLoadBalancerBasicEcsPublicListenerBasicEcsTargetsGroup7F07C398
+          Type: forward
+      LoadBalancerArn:
+        Ref: BasicEcsLoadBalancer3D620985
+      Port: 80
+      Protocol: HTTP
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsLoadBalancer/BasicEcsPublicListener/Resource
+  BasicEcsLoadBalancerBasicEcsPublicListenerBasicEcsTargetsGroup7F07C398:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      HealthCheckIntervalSeconds: 30
+      HealthCheckPath: /
+      HealthCheckTimeoutSeconds: 10
+      Port: 80
+      Protocol: HTTP
+      TargetType: ip
+      VpcId:
+        Ref: BasicEcsVpc1C16EA90
+    Metadata:
+      aws:cdk:path: DemoBasicEcs/BasicEcsLoadBalancer/BasicEcsPublicListener/BasicEcsTargetsGroup/Resource
+  CDKMetadata:
+    Type: AWS::CDK::Metadata
+    Properties:
+      Modules: aws-cdk=1.16.2,@aws-cdk/assets=1.16.2,@aws-cdk/aws-applicationautoscaling=1.16.2,@aws-cdk/aws-autoscaling=1.16.2,@aws-cdk/aws-autoscaling-common=1.16.2,@aws-cdk/aws-autoscaling-hooktargets=1.16.2,@aws-cdk/aws-cloudformation=1.16.2,@aws-cdk/aws-cloudwatch=1.16.2,@aws-cdk/aws-ec2=1.16.2,@aws-cdk/aws-ecr=1.16.2,@aws-cdk/aws-ecr-assets=1.16.2,@aws-cdk/aws-ecs=1.16.2,@aws-cdk/aws-elasticloadbalancingv2=1.16.2,@aws-cdk/aws-events=1.16.2,@aws-cdk/aws-iam=1.16.2,@aws-cdk/aws-kms=1.16.2,@aws-cdk/aws-lambda=1.16.2,@aws-cdk/aws-logs=1.16.2,@aws-cdk/aws-s3=1.16.2,@aws-cdk/aws-s3-assets=1.16.2,@aws-cdk/aws-servicediscovery=1.16.2,@aws-cdk/aws-sns=1.16.2,@aws-cdk/aws-sns-subscriptions=1.16.2,@aws-cdk/aws-sqs=1.16.2,@aws-cdk/aws-ssm=1.16.2,@aws-cdk/core=1.16.2,@aws-cdk/cx-api=1.16.2,@aws-cdk/region-info=1.16.2,jsii-runtime=node.js/v12.13.0
+    Condition: CDKMetadataAvailable
+Parameters:
+  SsmParameterValueawsserviceecsoptimizedamiamazonlinux2recommendedimageidC96584B6F00A464EAD1953AFF4B05118Parameter:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id
+Outputs:
+  EcsClusterName:
+    Value:
+      Ref: BasicEcsCluster54ADACAF
+  LogGroup:
+    Value:
+      Ref: BasicEcsLogGroup54C77999
+  LoadBalancerDNS:
+    Value:
+      Fn::GetAtt:
+        - BasicEcsLoadBalancer3D620985
+        - DNSName
+Conditions:
+  CDKMetadataAvailable:
+    Fn::Or:
+      - Fn::Or:
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ap-east-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ap-northeast-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ap-northeast-2
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ap-south-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ap-southeast-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ap-southeast-2
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ca-central-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - cn-north-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - cn-northwest-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - eu-central-1
+      - Fn::Or:
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - eu-north-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - eu-west-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - eu-west-2
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - eu-west-3
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - me-south-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - sa-east-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - us-east-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - us-east-2
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - us-west-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - us-west-2
+
+Done in 2.12s.

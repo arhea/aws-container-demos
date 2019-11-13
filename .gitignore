@@ -1,0 +1,16 @@
+# TypeScript incremental build states
+*.tsbuildinfo
+
+# Local state files & OS specifics
+.DS_Store
+node_modules/
+dist/
+pack/
+.tools/
+coverage/
+
+# CDK Context & Staging files
+cdk.context.json
+.cdk.staging/
+cdk.out/
+
